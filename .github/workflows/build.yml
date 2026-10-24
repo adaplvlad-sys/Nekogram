@@ -22,8 +22,24 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Fix ALL Nekogram Bugs (Kotlin, Navigation, Baseline)
+      run: |
+        # 1. Убираем требование Kotlin 2.2
+        sed -i '39,40d' build-logic/convention/build.gradle.kts || true
+        sed -i 's/KOTLIN_2_2/KOTLIN_1_9/g' build-logic/convention/build.gradle.kts || true
+        
+        # 2. Убираем baselineprofile и google-services из build.gradle
+        sed -i '/baselineprofile/d' TMessagesProj_App/build.gradle || true
+        sed -i '/com.google.gms.google-services/d' TMessagesProj_App/build.gradle || true
+        
+        # 3. На всякий случай вырезаем навигацию
+        find . -name "build.gradle*" -exec sed -i '/androidx.navigation/d' {} + || true
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
     - name: Build with Gradle
-      run: ./gradlew assembleDebug --stacktrace
+      run: ./gradlew assembleDebug --stacktrace --no-configuration-cache
 
     - name: Upload APK
       uses: actions/upload-artifact@v4

@@ -22,24 +22,22 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Kill Navigation Plugin (фикс Object.toString)
+    - name: Kill Navigation Plugin
       run: |
-        # Ищем все файлы build.gradle* и удаляем оттуда плагин навигации
         find . -name "build.gradle*" -exec sed -i '/androidx.navigation.safeargs/d' {} + || true
         find . -name "build.gradle*" -exec sed -i '/navigation.safeargs/d' {} + || true
-        
-        # Отключаем само создание навигационных ресурсов
-        echo "android.nonTransitiveRClass=true" >> gradle.properties
-        echo "android.nonFinalResIds=true" >> gradle.properties
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew assembleAfatDebug --stacktrace --no-configuration-cache
+    - name: Show available tasks (СПИСОК ЗАДАЧ)
+      run: ./gradlew tasks --all --no-configuration-cache | grep -i assemble || true
+
+    - name: Build with Gradle (пробуем стандартный)
+      run: ./gradlew assembleDebug --stacktrace --no-configuration-cache
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: TMessagesProj/build/outputs/apk/afat/debug/*.apk
+        path: TMessagesProj/build/outputs/apk/debug/*.apk

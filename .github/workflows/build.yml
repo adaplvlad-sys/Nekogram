@@ -22,9 +22,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Fix Kotlin Version
+    - name: Disable Android Test Plugin & Fix Kotlin
       run: |
-        # Убираем требование Kotlin 2.2 из файла convention
+        # 1. Убираем плагин com.android.test, который требует Gradle 9.6
+        sed -i 's/id("com.android.test")/\/\/ id("com.android.test")/g' baselineprofile/build.gradle || true
+        sed -i 's/id("com.android.test")/\/\/ id("com.android.test")/g' baselineprofile/build.gradle.kts || true
+        
+        # 2. Убираем требование Kotlin 2.2 (чтобы 8.7 не ругался)
         sed -i '/KOTLIN_2_2/d' build-logic/convention/build.gradle.kts || true
         sed -i 's/KotlinVersion.KOTLIN_2_2/KotlinVersion.KOTLIN_1_9/g' build-logic/convention/build.gradle.kts || true
 

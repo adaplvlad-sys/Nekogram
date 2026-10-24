@@ -25,11 +25,14 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Show available tasks (for debug)
+      run: ./gradlew tasks --all | grep -i assemble || true
+
     - name: Build with Gradle
-      run: ./gradlew assembleAfatDebug --stacktrace
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: TMessagesProj/build/outputs/apk/afat/debug/*.apk
+        path: TMessagesProj/build/outputs/apk/debug/*.apk

@@ -22,23 +22,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Disable Navigation Resources
-      run: |
-        # Жестко отключаем плагин навигации в корневом build.gradle
-        sed -i '/androidx.navigation/d' build.gradle || true
-        sed -i '/navigation.safeargs/d' build.gradle || true
-        
-        # Добавляем флаг, который говорит Gradle игнорировать ошибку
-        echo "android.disableResourceValidation=true" >> gradle.properties
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
     - name: Build with Gradle
-      run: ./gradlew assembleDebug --stacktrace --no-configuration-cache -Pandroid.nonTransitiveRClass=true
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: TMessagesProj/build/outputs/apk/debug/*.apk
+        path: TMessagesProj_App/build/outputs/apk/debug/*.apk
